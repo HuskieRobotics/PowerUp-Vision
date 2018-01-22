@@ -45,7 +45,7 @@ def detectRectangles(image):
         x,y,w,h = cv2.boundingRect(rectangles[index])
         area= cv2.contourArea(rectangles[index])
         #checks for correct aspect ratio of the rectangles
-        if ((abs(float(w)/h - 2.5)>.7) and (abs(float(h)/w- 2.5) >.7)):
+        if ((abs(float(w)/h - 7.5)>.7) and (abs(float(h)/w- 7.5) >.7)):
             rectangles.pop(index)
 
         #checks if area is within reasonable range
@@ -54,6 +54,11 @@ def detectRectangles(image):
         index-=1
 
     return rectangles
+def findRectangles(contours):
+    returnList = []
+    for r in contours:
+        returnList.append(np.int0(cv2.boxPoints(cv2.minAreaRect(r))))
+    return returnList
 
 def rectangleStats(rectangles):
     x,y,w,h = cv2.boundingRect(rectangles[0])

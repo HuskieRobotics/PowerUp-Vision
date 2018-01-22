@@ -28,15 +28,12 @@ def getVideo():
     rawCapture = PiRGBArray(camera,size=(320,240))
 
     ###Edit the line below and change the IP address to your robot's ip (i.e. "10.30.61.17"), port is an arbitrary number
-    client = UDP_Client.Client("Robot IP",9000) #(IP,PORT)
+    client = UDP_Client.Client("10.30.61.17",5800) #(IP,PORT)
     predictor = MLPredictor.Predictor('neuralNetGL3')
 
     #frame_time is a pretty precise way of getting the timestamp of your image if you need it
     frame_time = time.time()
-    circular_angle_array = []
-    weights = [.6,.2,.1,.05,.025,.02265,.00125,.000625,.0003125,.00015625]
-    MAX_SIZE = 10
-    arrayPos = 0
+
     for frame in camera.capture_continuous(rawCapture,format = 'bgr',use_video_port = True):
         image = frame.array
 
@@ -45,18 +42,11 @@ def getVideo():
         targetX, targetY, targetW, targetH = process_image(image)
         coord3D = predictor.predict3D([targetX,targetY,targetW,targetH])
         angle = predictor.getAngle(coord3D)
-        circular_angle_array.insert(arrayPos, angle)
 
-        final_angles = 0
-        for i in range(MAX_SIZE):
-            final_angles += weights[(i)%MAX_SIZE] * circular_angle_array[(i+arrayPos)%MAX_SIZE]
-
-        print(final_angles)
-        arrayPos = (arrayPos+=1)%10
 
         ###Input your data and tags into the list below to send data to the rio
         ###This data is converted to a json string FYI, makes the sending faster
-        client.sendData({"Angle":final_angles,"Time":frame_time})
+        client.sendData({"Angle":angle,"Time":frame_time})
 
         #this trunctates the stream of images to grab the current image
         rawCapture.truncate(0)
