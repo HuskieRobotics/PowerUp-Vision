@@ -1,0 +1,11 @@
+[Service]
+WorkingDirectory=/home/pi/Huskie-Vision/setup/
+ExecStart= /home/pi/Huskie-Vision/setup/launcher.sh
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=VisionResults
+User=root
+Group=root
+[Install]
+WantedBy=multi-user.target
